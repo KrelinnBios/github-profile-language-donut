@@ -16,7 +16,7 @@ DEFAULT_CHART = {
     "donut_center_x": 418,
     "donut_radius": 72,
     "donut_width": 22,
-    "min_segment_percentage": 0.8,
+    "min_segment_percentage": 0,
     "round_segment_threshold": 5,
     "show_bars": True,
     "show_center_label": True,

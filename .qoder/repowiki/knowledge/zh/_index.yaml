@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-07-19T22:27:25Z"
+exported_at: "2026-07-19T22:46:47Z"
 modules:
     "":
-        dir_name: GitHub Profile Language Donut Chart Action（根仓库）
-        title: GitHub Profile Language Donut Chart Action（根仓库）
+        dir_name: GitHub Profile Language Donut Chart Action
+        title: GitHub Profile Language Donut Chart Action
         scope:
             - README.md
             - README.en.md
