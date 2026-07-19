@@ -1,0 +1,15 @@
+schema_version: 1
+module_path: ""
+title: GitHub Profile Language Donut Chart Action（根仓库）
+scope:
+    - README.md
+    - README.en.md
+    - README.zh-TW.md
+    - .gitignore
+    - .gitattributes
+    - action.yml
+    - .github/workflows/test.yml
+    - LICENSE
+source_files: []
+depends_on: []
+related_to: []

@@ -1,0 +1,23 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: main
+nodes_managed: true
+exported_at: "2026-07-19T22:27:25Z"
+modules:
+    "":
+        dir_name: GitHub Profile Language Donut Chart Action（根仓库）
+        title: GitHub Profile Language Donut Chart Action（根仓库）
+        scope:
+            - README.md
+            - README.en.md
+            - README.zh-TW.md
+            - .gitignore
+            - .gitattributes
+            - action.yml
+            - .github/workflows/test.yml
+            - LICENSE
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

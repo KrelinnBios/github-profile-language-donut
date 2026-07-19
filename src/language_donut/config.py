@@ -46,7 +46,7 @@ DEFAULT_COLORS = {
 def load_config(config_path: Path):
     raw = {}
     if config_path.exists():
-        raw = json.loads(config_path.read_text(encoding="utf-8"))
+        raw = json.loads(config_path.read_text(encoding="utf-8-sig"))
 
     chart = DEFAULT_CHART.copy()
     chart.update(raw.get("chart", {}))
