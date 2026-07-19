@@ -1,3 +1,4 @@
+$sha = gh api repos/KrelinnBios/KrelinnBios/contents/language-donut.config.json --jq ".sha"
 $content = @'
 {
   "owner": "KrelinnBios",
@@ -19,7 +20,7 @@ $content = @'
     "donut_center_x": 418,
     "donut_radius": 72,
     "donut_width": 22,
-    "min_segment_percentage": 0.3,
+    "min_segment_percentage": 0.5,
     "round_segment_threshold": 5,
     "show_bars": true,
     "show_center_label": true
@@ -44,16 +45,13 @@ $content = @'
   }
 }
 '@
-
-$sha = gh api repos/KrelinnBios/KrelinnBios/contents/language-donut.config.json --jq ".sha"
 $contentB64 = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
 $body = @{
-  message = "chore: update min_segment_percentage to 0.3"
+  message = "chore: update min_segment_percentage to 0.5 (tiered floor)"
   content = $contentB64
   sha = $sha
   branch = "main"
 } | ConvertTo-Json -Compress
-
 $tempFile = "d:\Workspace\github-profile-language-donut\temp_config.json"
 [System.IO.File]::WriteAllText($tempFile, $body, [System.Text.UTF8Encoding]::new($false))
 gh api repos/KrelinnBios/KrelinnBios/contents/language-donut.config.json --method PUT --input $tempFile --jq ".commit.sha"

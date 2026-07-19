@@ -9,33 +9,42 @@ def segment_percentages(items, total_bytes, minimum_percentage):
     minimum = max(0.0, float(minimum_percentage))
 
     if minimum <= 0:
-        return actual, actual
+        return actual, actual, [False] * len(actual)
 
-    # Tiered floor: < min → min; min to 2*min → 2*min; rest stays.
+    # Tiered floor: ≤ min → dot (excluded); min to 2*min → 2*min; rest stays.
     upper = minimum * 2
+    dot_threshold = minimum
 
     def effective(value):
         if value <= 0:
             return 0.0
-        if value < minimum:
-            return minimum
+        if value <= dot_threshold:
+            return None  # will be rendered as dot
         if value < upper:
             return upper
-        return None  # will be scaled
+        return None  # will be scaled normally
 
-    boosted = [effective(v) for v in actual]
-    reserved = sum(v for v in boosted if v is not None)
-    scalable_total = sum(a for a, b in zip(actual, boosted) if b is None)
+    boosted = []
+    for v in actual:
+        e = effective(v)
+        if e == 0.0:
+            boosted.append(0.0)
+        else:
+            boosted.append(e)
 
-    if reserved >= 100 or scalable_total <= 0:
-        return actual, actual
+    is_dot = [b is None for b in boosted]
+    reserved = sum(b for b in boosted if b is not None and b > 0)
+    scalable_total = sum(a for a, d in zip(actual, is_dot) if not d and a > 0)
+
+    if not any(not d for d in is_dot) or reserved >= 100 or scalable_total <= 0:
+        return actual, actual, [False] * len(actual)
 
     scale = (100 - reserved) / scalable_total
     visible = [
-        b if b is not None else a * scale
-        for a, b in zip(actual, boosted)
+        b if (b is not None and b > 0) else (a * scale if not d else 0.0)
+        for a, b, d in zip(actual, boosted, is_dot)
     ]
-    return actual, visible
+    return actual, visible, is_dot
 
 
 def polar_to_cartesian(center_x, center_y, radius, angle):
@@ -62,13 +71,7 @@ def segment_path_geometry(segment_angle, gap_angle, minimum_fraction=0.25):
     if segment_angle <= 0:
         return 0.0, 0.0
 
-    # Minimum ~1.5° absolute visibility floor so tiny segments are always readable.
-    min_abs_angle = math.radians(1.5)
-    minimum_visible = min(segment_angle, max(
-        min_abs_angle,
-        max(0.0001, segment_angle * minimum_fraction),
-    ))
-    visible_angle = max(minimum_visible, segment_angle - gap_angle)
+    visible_angle = max(segment_angle * minimum_fraction, segment_angle - gap_angle)
     visible_angle = min(segment_angle, visible_angle)
     inset_angle = max(0.0, (segment_angle - visible_angle) / 2)
     return visible_angle, inset_angle
@@ -116,19 +119,40 @@ def build_svg(totals, config):
     dominant_language, dominant_bytes = items[0]
     dominant_percentage = dominant_bytes / total_bytes * 100
 
-    actual_percentages, visible_percentages = segment_percentages(
+    actual_percentages, visible_percentages, is_dot = segment_percentages(
         items,
         total_bytes,
-        chart.get("min_segment_percentage", 0.3),
+        chart.get("min_segment_percentage", 0.5),
     )
 
     segments = []
+    dots = []
     progress = 0.0
     start_angle_offset = -math.pi / 2
 
-    for (language, _), actual_percentage, visible_percentage in zip(
-        items, actual_percentages, visible_percentages
-    ):
+    # Place dot items as small circles at the bottom of the donut.
+    dot_angle_offset = math.pi / 2  # bottom of circle
+    dot_spacing = math.radians(5)  # 5° between dots
+    dot_items = [(i, lang) for i, (lang, _) in enumerate(items) if is_dot[i]]
+    dot_start = dot_angle_offset - (len(dot_items) - 1) * dot_spacing / 2 if dot_items else 0
+
+    for idx, (language, _) in enumerate(items):
+        color = color_for(language, colors)
+
+        if is_dot[idx]:
+            # Render as circle on the donut perimeter (diameter = stroke width).
+            dot_pos = dot_items.index((idx, language))
+            angle = dot_start + dot_pos * dot_spacing
+            dx, dy = polar_to_cartesian(center_x, center_y, radius, angle)
+            dot_r = stroke_width / 2
+            dots.append(
+                f'    <circle cx="{dx:.1f}" cy="{dy:.1f}" r="{dot_r:.1f}" '
+                f'fill="{color}" />'
+            )
+            continue
+
+        # Normal arc segment.
+        visible_percentage = visible_percentages[idx]
         segment_length = visible_percentage / 100 * circumference
         segment_angle = segment_length / radius if radius > 0 else 0.0
 
@@ -146,7 +170,7 @@ def build_svg(totals, config):
         path = describe_arc(center_x, center_y, radius, start_angle, end_angle)
         segments.append(
             f'    <path class="segment" d="{path}" '
-            f'stroke="{color_for(language, colors)}" />'
+            f'stroke="{color}" />'
         )
 
         progress += segment_length
@@ -181,15 +205,22 @@ def build_svg(totals, config):
         ]
 
         if show_bars:
-            row.extend(
-                [
-                    f'    <rect class="bar-track" x="{label_x:.1f}" y="{y + 9:.1f}" '
-                    f'width="{bar_width:.1f}" height="3" rx="1.5"/>',
-                    f'    <rect x="{label_x:.1f}" y="{y + 9:.1f}" '
-                    f'width="{max(4.0, bar_width * value / 100):.2f}" height="3" '
-                    f'rx="1.5" fill="{color}"/>',
-                ]
-            )
+            if is_dot[index]:
+                # Dot item: show a small circle instead of a bar.
+                row.append(
+                    f'    <circle cx="{label_x + 4:.1f}" cy="{y + 10.5:.1f}" '
+                    f'r="3" fill="{color}" />'
+                )
+            else:
+                row.extend(
+                    [
+                        f'    <rect class="bar-track" x="{label_x:.1f}" y="{y + 9:.1f}" '
+                        f'width="{bar_width:.1f}" height="3" rx="1.5"/>',
+                        f'    <rect x="{label_x:.1f}" y="{y + 9:.1f}" '
+                        f'width="{max(4.0, bar_width * value / 100):.2f}" height="3" '
+                        f'rx="1.5" fill="{color}"/>',
+                    ]
+                )
 
         legend_rows.extend(row)
 
@@ -238,6 +269,7 @@ def build_svg(totals, config):
   <g>
     <circle class="donut-track" cx="{center_x:.1f}" cy="{center_y:.1f}" r="{radius:.1f}" fill="none" stroke-width="{stroke_width:g}"/>
 {chr(10).join(segments)}
+{chr(10).join(dots)}
   </g>
 {center_text}</svg>
 '''
