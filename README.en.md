@@ -184,7 +184,7 @@ The chart therefore represents the current code-volume language mix of included 
 | `donut_center_x` | `418` | Donut center X coordinate in one-column mode |
 | `donut_radius` | `72` | Donut radius |
 | `donut_width` | `22` | Donut stroke width |
-| `min_segment_percentage` | `0.5` | Minimum visible donut percentage for very small languages |
+| `min_segment_percentage` | `0.3` | Minimum visible donut percentage for very small languages |
 | `round_segment_threshold` | `5` | Use rounded caps at or above this actual percentage; smaller segments use flat caps |
 | `show_bars` | `true` | Show percentage bars in the legend |
 | `show_center_label` | `true` | Show the leading language and percentage inside the donut |

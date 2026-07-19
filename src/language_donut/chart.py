@@ -103,7 +103,7 @@ def build_svg(totals, config):
     actual_percentages, visible_percentages = segment_percentages(
         items,
         total_bytes,
-        chart.get("min_segment_percentage", 0.5),
+        chart.get("min_segment_percentage", 0.3),
     )
 
     segments = []
