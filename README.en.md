@@ -97,10 +97,9 @@ A complete workflow checks out the repository, runs the Action, and commits chan
 name: Update language donut chart
 
 on:
+  schedule:
+    - cron: '0 */6 * * *'
   workflow_dispatch:
-  repository_dispatch:
-    types:
-      - code-pushed
   push:
     paths:
       - ".github/workflows/update-language-donut.yml"
@@ -133,6 +132,8 @@ jobs:
           git commit -m "Update language donut chart"
           git push
 ```
+
+The workflow uses `schedule` to run automatically every 6 hours — no cross-repo token required.
 
 ### 5. Run it for the first time
 
@@ -217,29 +218,18 @@ Names must match the values returned by the GitHub Languages API. Languages not 
 
 ## Update Behavior
 
-### Configuration and manual updates
+### Scheduled and manual updates
 
 The example profile workflow runs when:
 
+- Every 6 hours on schedule (`cron: '0 */6 * * *'`).
 - **Run workflow** is triggered manually.
 - The update workflow itself changes.
 - `language-donut.config.json` changes.
-- A `repository_dispatch` event with type `code-pushed` is received.
 
 The Action reports `changed=true` only when the SVG content, README reference, or old generated files change. Identical data does not create duplicate commits.
 
-### Update after code pushes
-
-To refresh the profile immediately after code is pushed to another repository, copy [`examples/notify-profile.yml`](./examples/notify-profile.yml) into each source repository:
-
-1. Create a fine-grained personal access token scoped only to the profile repository.
-2. Grant **Contents: Read and write** on that profile repository.
-3. Add it as `PROFILE_REPO_TOKEN` under **Settings → Secrets and variables → Actions** in each source repository.
-4. Replace `YOUR_GITHUB_USERNAME` in the example workflow.
-
-The example uses `paths-ignore` for Markdown and license files, so documentation-only pushes do not request a chart update. If the default branch is not `main`, update the branch name in the workflow.
-
-Never commit the token to a repository or print it in workflow logs.
+Scheduled updates require no cross-repo tokens. For immediate refreshes, click **Run workflow** manually.
 
 ## Action Inputs and Outputs
 
@@ -266,7 +256,7 @@ Never commit the token to a repository or print it in workflow logs.
 - Other full release tags: select one from [Releases](https://github.com/KrelinnBios/github-profile-language-donut/releases) and upgrade explicitly.
 - Full commit SHA: provides the strictest supply-chain reproducibility but requires manual update tracking.
 
-The profile workflow uses `contents: write` only to commit the generated SVG and README. The Action does not write to other repositories. Keep `PROFILE_REPO_TOKEN` scoped to the profile repository and grant only the minimum permission required for cross-repository dispatch.
+The profile workflow uses `contents: write` only to commit the generated SVG and README. The Action does not write to other repositories.
 
 ## Troubleshooting
 
@@ -285,10 +275,6 @@ Check whether each repository is public, owned by the configured account, forked
 ### No new commit was generated
 
 When both language data and styling are unchanged, the SVG content hash remains unchanged and `changed` is `false`. This is expected.
-
-### Code pushes do not refresh the profile
-
-Check that `PROFILE_REPO_TOKEN` exists in the source repository, can access the profile repository with **Contents: Read and write**, sends the `code-pushed` event type, and that the receiving profile workflow exists on the default branch.
 
 ## Local Development
 
