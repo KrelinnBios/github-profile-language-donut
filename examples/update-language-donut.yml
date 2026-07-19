@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-name: 更新语言占比环形图
+﻿name: 更新语言占比环形图
 
 on:
   workflow_dispatch:
@@ -41,47 +40,3 @@ jobs:
           git add -A -- README.md 'language-donut-*.svg'
           git commit -m "自动更新语言占比环形图"
           git push
-=======
-name: 更新语言占比环形图
-
-on:
-  workflow_dispatch:
-  repository_dispatch:
-    types:
-      - code-pushed
-  push:
-    paths:
-      - ".github/workflows/update-language-donut.yml"
-      - "language-donut.config.json"
-
-permissions:
-  contents: write
-
-concurrency:
-  group: update-language-donut
-  cancel-in-progress: true
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出主页仓库
-        uses: actions/checkout@v4
-
-      - name: 生成语言占比环形图
-        id: language-donut
-        uses: KrelinnBios/github-profile-language-donut@v1.0.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          config-path: language-donut.config.json
-          output-prefix: language-donut
-
-      - name: 提交更新后的图表
-        if: steps.language-donut.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- README.md 'language-donut-*.svg'
-          git commit -m "自动更新语言占比环形图"
-          git push
->>>>>>> 23b6d9dccb1f19b39219aee4f0a0b2a3b8f1939d
