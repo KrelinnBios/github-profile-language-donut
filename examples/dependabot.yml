@@ -1,0 +1,8 @@
+# Place this file at .github/dependabot.yml in your profile repository.
+# Dependabot will create a pull request when a new version of the action is released.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
