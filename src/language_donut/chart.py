@@ -7,17 +7,33 @@ from .colors import color_for, displayed_languages, percentage_label
 def segment_percentages(items, total_bytes, minimum_percentage):
     actual = [byte_count / total_bytes * 100 for _, byte_count in items]
     minimum = max(0.0, float(minimum_percentage))
-    tiny = [0 < value < minimum for value in actual]
-    reserved = sum(tiny) * minimum
-    scalable_total = sum(value for value, is_tiny in zip(actual, tiny) if not is_tiny)
 
-    if not any(tiny) or reserved >= 100 or scalable_total <= 0:
+    if minimum <= 0:
+        return actual, actual
+
+    # Tiered floor: < min → min; min to 2*min → 2*min; rest stays.
+    upper = minimum * 2
+
+    def effective(value):
+        if value <= 0:
+            return 0.0
+        if value < minimum:
+            return minimum
+        if value < upper:
+            return upper
+        return None  # will be scaled
+
+    boosted = [effective(v) for v in actual]
+    reserved = sum(v for v in boosted if v is not None)
+    scalable_total = sum(a for a, b in zip(actual, boosted) if b is None)
+
+    if reserved >= 100 or scalable_total <= 0:
         return actual, actual
 
     scale = (100 - reserved) / scalable_total
     visible = [
-        minimum if is_tiny else value * scale
-        for value, is_tiny in zip(actual, tiny)
+        b if b is not None else a * scale
+        for a, b in zip(actual, boosted)
     ]
     return actual, visible
 
