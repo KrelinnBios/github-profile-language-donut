@@ -1,14 +1,17 @@
-﻿name: 更新语言占比环形图
+# Place this file at .github/workflows/update-language-donut.yml in your profile repository.
+name: Update language donut chart
 
 on:
+  # Scheduled update every 6 hours (no cross-repo token needed)
+  schedule:
+    - cron: '0 */6 * * *'
+  # Manual trigger
   workflow_dispatch:
-  repository_dispatch:
-    types:
-      - code-pushed
+  # Re-run when config or workflow changes
   push:
     paths:
-      - ".github/workflows/update-language-donut.yml"
-      - "language-donut.config.json"
+      - '.github/workflows/update-language-donut.yml'
+      - 'language-donut.config.json'
 
 permissions:
   contents: write
@@ -21,10 +24,10 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出主页仓库
+      - name: Check out profile repository
         uses: actions/checkout@v4
 
-      - name: 生成语言占比环形图
+      - name: Generate language donut chart
         id: language-donut
         uses: KrelinnBios/github-profile-language-donut@v1.0.1
         with:
@@ -32,11 +35,11 @@ jobs:
           config-path: language-donut.config.json
           output-prefix: language-donut
 
-      - name: 提交更新后的图表
+      - name: Commit updated chart
         if: steps.language-donut.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- README.md 'language-donut-*.svg'
-          git commit -m "自动更新语言占比环形图"
+          git commit -m "Update language donut chart"
           git push
