@@ -184,7 +184,7 @@ jobs:
 | `donut_center_x` | `418` | 單欄模式的環形圖圓心水平座標 |
 | `donut_radius` | `72` | 環形圖半徑 |
 | `donut_width` | `22` | 環形線寬 |
-| `min_segment_percentage` | `0.8` | 極小語言扇段在環形圖中的最低可見百分比 |
+| `min_segment_percentage` | `0.5` | 極小語言扇段在環形圖中的最低可見百分比 |
 | `round_segment_threshold` | `5` | 達到該真實百分比時使用圓潤端點，更小扇段使用平直端點 |
 | `show_bars` | `true` | 是否顯示語言佔比橫條 |
 | `show_center_label` | `true` | 是否顯示環形圖中心的首位語言與百分比 |

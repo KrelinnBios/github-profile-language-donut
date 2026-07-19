@@ -23,8 +23,4 @@ def color_for(language, colors):
 
 
 def percentage_label(value):
-    if value < 0.1:
-        return "<1%"
-    if value >= 10:
-        return f"{value:.0f}%"
     return f"{value:.1f}%"

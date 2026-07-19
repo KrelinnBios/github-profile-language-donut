@@ -18,7 +18,7 @@
     "donut_center_x": 418,
     "donut_radius": 72,
     "donut_width": 22,
-    "min_segment_percentage": 1.0,
+    "min_segment_percentage": 0.5,
     "round_segment_threshold": 5,
     "show_bars": true,
     "show_center_label": true
