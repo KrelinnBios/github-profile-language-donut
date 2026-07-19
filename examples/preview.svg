@@ -43,22 +43,22 @@
     <text class="label" x="44.0" y="162.5">Python</text>
     <text class="percent" x="183.0" y="162.5" text-anchor="end">0.5%</text>
     <rect class="bar-track" x="44.0" y="171.5" width="139.0" height="3" rx="1.5"/>
-    <rect x="44.0" y="171.5" width="2.00" height="3" rx="1.5" fill="#22C55E"/>
+    <rect x="44.0" y="171.5" width="4.00" height="3" rx="1.5" fill="#22C55E"/>
     <circle cx="209.0" cy="30.5" r="5" fill="#EC4899"/>
     <text class="label" x="227.0" y="34.5">PowerShell</text>
     <text class="percent" x="366.0" y="34.5" text-anchor="end">0.2%</text>
     <rect class="bar-track" x="227.0" y="43.5" width="139.0" height="3" rx="1.5"/>
-    <rect x="227.0" y="43.5" width="2.00" height="3" rx="1.5" fill="#EC4899"/>
+    <rect x="227.0" y="43.5" width="4.00" height="3" rx="1.5" fill="#EC4899"/>
   </g>
 
   <g>
     <circle class="donut-track" cx="508.0" cy="94.0" r="72.0" fill="none" stroke-width="22"/>
-    <path class="segment" d="M 509.50 22.02 A 72.00 72.00 0 0 1 533.97 161.15" stroke="#7F52FF" />
-    <path class="segment" d="M 531.15 162.18 A 72.00 72.00 0 0 1 437.18 81.01" stroke="#E34F26" />
-    <path class="segment" d="M 437.78 78.07 A 72.00 72.00 0 0 1 489.01 24.55" stroke="#F7DF1E" />
-    <path class="segment" d="M 491.72 23.87 A 72.00 72.00 0 0 1 503.40 22.15" stroke="#00B8D9" />
-    <path class="segment" d="M 504.91 22.07 A 72.00 72.00 0 0 1 506.80 22.01" stroke="#22C55E" />
-    <path class="segment" d="M 507.09 22.01 A 72.00 72.00 0 0 1 507.91 22.00" stroke="#EC4899" />
+    <path class="segment" d="M 509.50 22.02 A 72.00 72.00 0 0 1 536.35 160.18" stroke="#7F52FF" />
+    <path class="segment" d="M 533.57 161.31 A 72.00 72.00 0 0 1 436.51 85.49" stroke="#E34F26" />
+    <path class="segment" d="M 436.92 82.52 A 72.00 72.00 0 0 1 483.70 26.22" stroke="#F7DF1E" />
+    <path class="segment" d="M 486.34 25.34 A 72.00 72.00 0 0 1 497.71 22.74" stroke="#00B8D9" />
+    <path class="segment" d="M 499.38 22.52 A 72.00 72.00 0 0 1 503.07 22.17" stroke="#22C55E" />
+    <path class="segment" d="M 503.89 22.12 A 72.00 72.00 0 0 1 507.59 22.00" stroke="#EC4899" />
   </g>
   <text class="center-value" x="508.0" y="92.0">44%</text>
   <text class="center-label" x="508.0" y="113.0">Kotlin</text>
