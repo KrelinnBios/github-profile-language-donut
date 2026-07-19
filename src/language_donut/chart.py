@@ -46,7 +46,12 @@ def segment_path_geometry(segment_angle, gap_angle, minimum_fraction=0.25):
     if segment_angle <= 0:
         return 0.0, 0.0
 
-    minimum_visible = min(segment_angle, max(0.0001, segment_angle * minimum_fraction))
+    # Minimum ~2.5° absolute visibility floor so tiny segments are always readable.
+    min_abs_angle = math.radians(2.5)
+    minimum_visible = min(segment_angle, max(
+        min_abs_angle,
+        max(0.0001, segment_angle * minimum_fraction),
+    ))
     visible_angle = max(minimum_visible, segment_angle - gap_angle)
     visible_angle = min(segment_angle, visible_angle)
     inset_angle = max(0.0, (segment_angle - visible_angle) / 2)
