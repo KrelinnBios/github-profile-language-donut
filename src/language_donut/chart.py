@@ -219,3 +219,4 @@ def build_svg(totals, config):
 {chr(10).join(segments)}
   </g>
 {center_text}</svg>
+'''
