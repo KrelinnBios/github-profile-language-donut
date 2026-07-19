@@ -1,0 +1,91 @@
+<<<<<<< HEAD
+{
+  "owner": "YOUR_GITHUB_USERNAME",
+  "profile_repository": "YOUR_GITHUB_USERNAME",
+  "excluded_repositories": [],
+  "max_named_languages": 9,
+  "chart": {
+    "width": 525,
+    "min_height": 188,
+    "vertical_padding": 28,
+    "row_height": 32,
+    "legend_x": 20,
+    "legend_width": 256,
+    "legend_column_gap": 20,
+    "two_column_extra_width": 90,
+    "legend_rows_per_column": 5,
+    "legend_max_columns": 2,
+    "legend_vertical_offset": 6,
+    "donut_center_x": 418,
+    "donut_radius": 72,
+    "donut_width": 22,
+    "min_segment_percentage": 0.8,
+    "round_segment_threshold": 5,
+    "show_bars": true,
+    "show_center_label": true
+  },
+  "theme": {
+    "light_text": "#24292f",
+    "light_muted": "#57606a",
+    "light_track": "#d0d7de",
+    "dark_text": "#f0f6fc",
+    "dark_muted": "#8b949e",
+    "dark_track": "#30363d"
+  },
+  "colors": {
+    "Kotlin": "#7F52FF",
+    "HTML": "#E34F26",
+    "JavaScript": "#F7DF1E",
+    "CSS": "#00B8D9",
+    "TypeScript": "#3178C6",
+    "Python": "#22C55E",
+    "PowerShell": "#EC4899",
+    "Other": "#8B949E"
+  }
+}
+=======
+{
+  "owner": "YOUR_GITHUB_USERNAME",
+  "profile_repository": "YOUR_GITHUB_USERNAME",
+  "excluded_repositories": [],
+  "max_named_languages": 9,
+  "chart": {
+    "width": 525,
+    "min_height": 188,
+    "vertical_padding": 28,
+    "row_height": 32,
+    "legend_x": 20,
+    "legend_width": 256,
+    "legend_column_gap": 20,
+    "two_column_extra_width": 90,
+    "legend_rows_per_column": 5,
+    "legend_max_columns": 2,
+    "legend_vertical_offset": 6,
+    "donut_center_x": 418,
+    "donut_radius": 72,
+    "donut_width": 22,
+    "min_segment_percentage": 0.8,
+    "round_segment_threshold": 5,
+    "show_bars": true,
+    "show_center_label": true
+  },
+  "theme": {
+    "light_text": "#24292f",
+    "light_muted": "#57606a",
+    "light_track": "#d0d7de",
+    "dark_text": "#f0f6fc",
+    "dark_muted": "#8b949e",
+    "dark_track": "#30363d"
+  },
+  "colors": {
+    "Kotlin": "#7F52FF",
+    "HTML": "#E34F26",
+    "JavaScript": "#F7DF1E",
+    "CSS": "#00B8D9",
+    "TypeScript": "#3178C6",
+    "Python": "#22C55E",
+    "PowerShell": "#EC4899",
+    "Other": "#8B949E"
+  }
+}
+>>>>>>> 23b6d9dccb1f19b39219aee4f0a0b2a3b8f1939d

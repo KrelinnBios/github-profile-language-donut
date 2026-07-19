@@ -1,0 +1,49 @@
+<<<<<<< HEAD
+name: Notify profile language chart
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE*"
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send code-pushed event
+        # PROFILE_REPO_TOKEN must be a fine-grained token scoped to the profile
+        # repository with Contents: write permission.
+        env:
+          GH_TOKEN: ${{ secrets.PROFILE_REPO_TOKEN }}
+        run: >-
+          gh api --method POST
+          repos/YOUR_GITHUB_USERNAME/YOUR_GITHUB_USERNAME/dispatches
+          -f event_type=code-pushed
+=======
+name: Notify profile language chart
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE*"
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send code-pushed event
+        # PROFILE_REPO_TOKEN must be a fine-grained token scoped to the profile
+        # repository with Contents: write permission.
+        env:
+          GH_TOKEN: ${{ secrets.PROFILE_REPO_TOKEN }}
+        run: >-
+          gh api --method POST
+          repos/YOUR_GITHUB_USERNAME/YOUR_GITHUB_USERNAME/dispatches
+          -f event_type=code-pushed
+>>>>>>> 23b6d9dccb1f19b39219aee4f0a0b2a3b8f1939d
