@@ -98,7 +98,7 @@ def build_svg(totals, config):
     actual_percentages, visible_percentages = segment_percentages(
         items,
         total_bytes,
-        chart.get("min_segment_percentage", 0.8),
+        chart.get("min_segment_percentage", 1.0),
     )
 
     segments = []
@@ -165,7 +165,7 @@ def build_svg(totals, config):
                     f'    <rect class="bar-track" x="{label_x:.1f}" y="{y + 9:.1f}" '
                     f'width="{bar_width:.1f}" height="3" rx="1.5"/>',
                     f'    <rect x="{label_x:.1f}" y="{y + 9:.1f}" '
-                    f'width="{max(2.0, bar_width * value / 100):.2f}" height="3" '
+                    f'width="{max(4.0, bar_width * value / 100):.2f}" height="3" '
                     f'rx="1.5" fill="{color}"/>',
                 ]
             )

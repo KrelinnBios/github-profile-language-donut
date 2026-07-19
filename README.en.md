@@ -6,7 +6,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/KrelinnBios/github-profile-language-donut/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/KrelinnBios/github-profile-language-donut/test.yml?branch=main&style=flat-square&label=tests&color=247344" alt="Test status"></a>
   <a href="https://github.com/KrelinnBios/github-profile-language-donut/releases"><img src="https://img.shields.io/github/v/release/KrelinnBios/github-profile-language-donut?style=flat-square&label=release&color=7F52FF" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/platform-GitHub%20Actions-247344?style=flat-square" alt="GitHub Actions">
   <img src="https://img.shields.io/badge/license-MIT-1f5f9c?style=flat-square" alt="MIT License">
