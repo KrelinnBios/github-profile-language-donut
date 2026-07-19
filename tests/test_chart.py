@@ -89,8 +89,8 @@ class BuildSvgTests(unittest.TestCase):
 
     def test_segments_render_as_independent_rounded_arcs(self):
         """
-        每个语言应该生成独立 path，
-        不再使用 circle dasharray。
+        大于 dot 阈值的语言生成独立 path，
+        极小语言渲染为圆点。
         """
 
         totals = Counter(
@@ -106,13 +106,17 @@ class BuildSvgTests(unittest.TestCase):
 
         svg = build_svg(totals, config())
 
-
-        # 六个语言 = 六个独立圆弧
+        # 四个语言 > 0.5% = 四个独立圆弧
         self.assertEqual(
-            6,
+            4,
             len(re.findall(r'<path class="segment"', svg))
         )
 
+        # 两个极小语言 = 两个圆点
+        self.assertGreaterEqual(
+            len(re.findall(r'<circle cx=', svg)),
+            2,
+        )
 
         # 全部使用圆角
         self.assertIn(
@@ -132,22 +136,21 @@ class BuildSvgTests(unittest.TestCase):
             svg
         )
 
-
-        expected_colors = (
-            "#7F52FF",
-            "#E34F26",
-            "#F7DF1E",
-            "#00B8D9",
-            "#22C55E",
-            "#EC4899",
-        )
-
-        for color in expected_colors:
+        # 圆弧语言颜色以 stroke 出现
+        arc_colors = ("#7F52FF", "#E34F26", "#F7DF1E", "#00B8D9")
+        for color in arc_colors:
             self.assertIn(
                 f'stroke="{color}"',
                 svg
             )
 
+        # 极小语言颜色以 fill 出现（圆点）
+        dot_colors = ("#22C55E", "#EC4899")
+        for color in dot_colors:
+            self.assertIn(
+                f'fill="{color}"',
+                svg
+            )
 
         # 确认使用 SVG arc
         self.assertIn(
@@ -158,7 +161,7 @@ class BuildSvgTests(unittest.TestCase):
 
     def test_tiny_segments_are_not_lost(self):
         """
-        极小比例语言仍然应该保留。
+        极小比例语言仍然应该保留（渲染为圆点）。
         """
 
         totals = Counter(
@@ -171,13 +174,13 @@ class BuildSvgTests(unittest.TestCase):
 
         svg = build_svg(totals, config())
 
-
+        # Kotlin 是唯一的弧段
         self.assertEqual(
-            3,
+            1,
             len(re.findall(r'<path class="segment"', svg))
         )
 
-
+        # Python 和 PowerShell 渲染为圆点
         self.assertIn(
             "#22C55E",
             svg
