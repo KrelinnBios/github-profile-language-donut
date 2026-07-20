@@ -1,4 +1,4 @@
-﻿# GitHub Profile Language Donut Chart
+# GitHub Profile Language Donut Chart
 
 <p align="center">
   <strong>Repository languages · Adaptive layout · Automatic updates</strong><br>
@@ -40,7 +40,7 @@ It is intended for GitHub users who want to present the language mix of their cu
 ## Preview
 
 <p align="center">
-  <img src="examples/preview.svg" alt="Language distribution donut chart preview">
+  <img src="examples/preview-contiguous-20260720.svg" alt="Language distribution donut chart preview">
 </p>
 
 Default layout behavior:

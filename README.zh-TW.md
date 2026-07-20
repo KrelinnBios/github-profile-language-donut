@@ -1,4 +1,4 @@
-﻿# GitHub Profile Language Donut Chart
+# GitHub Profile Language Donut Chart
 
 <p align="center">
   <strong>儲存庫語言 · 自適應版面 · 自動更新</strong><br>
@@ -40,7 +40,7 @@ GitHub Profile Language Donut Chart 是一個可重複使用的 GitHub Action。
 ## 效果預覽
 
 <p align="center">
-  <img src="examples/preview.svg" alt="語言佔比環形圖預覽">
+  <img src="examples/preview-contiguous-20260720.svg" alt="語言佔比環形圖預覽">
 </p>
 
 預設版面規則：
