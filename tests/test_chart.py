@@ -63,8 +63,8 @@ class BuildSvgTests(unittest.TestCase):
         self.assertEqual(6, len(re.findall(r'<path class="segment"', svg)))
         self.assertIn('class="donut-track" d="M', svg)
         self.assertIn(" Q ", svg)
-        self.assertIn("A 72.00 72.00", svg)
-        self.assertIn("A 50.00 50.00", svg)
+        self.assertIn("A 83.00 83.00", svg)
+        self.assertIn("A 61.00 61.00", svg)
         self.assertNotIn("stroke-linecap: round;", svg)
         self.assertNotIn("stroke-dasharray", svg)
 
