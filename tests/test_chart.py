@@ -27,7 +27,7 @@ class BuildSvgTests(unittest.TestCase):
         svg = build_svg(totals, config())
 
         self.assertIn('width="525"', svg)
-        self.assertIn('cx="418.0"', svg)
+        self.assertIn('class="center-value" x="418.0"', svg)
         self.assertIn('cx="26.0"', svg)
         self.assertEqual(5, len(re.findall(r'<text class="label"', svg)))
 
@@ -36,7 +36,7 @@ class BuildSvgTests(unittest.TestCase):
         svg = build_svg(totals, config())
 
         self.assertIn('width="615"', svg)
-        self.assertIn('cx="508.0"', svg)
+        self.assertIn('class="center-value" x="508.0"', svg)
         self.assertEqual(8, len(re.findall(r'<text class="label"', svg)))
 
     def test_tenth_entry_is_other(self):
