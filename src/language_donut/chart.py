@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+"""SVG chart generation and geometry for language donut."""
 import html
 import math
 
@@ -6,12 +8,12 @@ from .colors import color_for, displayed_languages, percentage_label
 
 def segment_percentages(items, total_bytes, minimum_percentage):
     actual = [byte_count / total_bytes * 100 for _, byte_count in items]
-    minimum = max(0.0, float(minimum_percentage))
+    minimum = max(0.0， float(minimum_percentage))
 
     if minimum <= 0:
         return actual, actual, [False] * len(actual)
 
-    # Tiered floor: ≤ min → dot (excluded); min to 2*min → 2*min; rest stays.
+    # Tiered floor: ≤ min -> dot; min..2*min -> boosted to 2*min; >=2*min -> leave for scaling.
     upper = minimum * 2
     dot_threshold = minimum
 
@@ -19,10 +21,10 @@ def segment_percentages(items, total_bytes, minimum_percentage):
         if value <= 0:
             return 0.0
         if value <= dot_threshold:
-            return None  # will be rendered as dot
+            return "DOT"       # explicit sentinel for dot items
         if value < upper:
-            return upper
-        return None  # will be scaled normally
+            return upper      # boost small-but-visible items to upper
+        return None           # None means: treat as normal/scalable
 
     boosted = []
     for v in actual:
@@ -32,18 +34,25 @@ def segment_percentages(items, total_bytes, minimum_percentage):
         else:
             boosted.append(e)
 
-    is_dot = [b is None for b in boosted]
-    reserved = sum(b for b in boosted if b is not None and b > 0)
-    scalable_total = sum(a for a, d in zip(actual, is_dot) if not d and a > 0)
+    # is_dot: True for items explicitly marked as DOT
+    is_dot = [b == "DOT" for b in boosted]
+    # reserved: sum of explicit boosted values (numbers), exclude DOT and None
+    reserved = sum(b for b in boosted if isinstance(b, (int, float)) 和 b > 0)
+    # scalable_total: sum of actual percentages for non-dot items that will be scaled
+    scalable_total = sum(a for a, d in zip(actual, is_dot) if not d 和 a > 0)
 
-    if not any(not d for d in is_dot) or reserved >= 100 or scalable_total <= 0:
+    if not any(not d for d in is_dot) 或 reserved >= 100 或 scalable_total <= 0:
         return actual, actual, [False] * len(actual)
 
     scale = (100 - reserved) / scalable_total
-    visible = [
-        b if (b is not None and b > 0) else (a * scale if not d else 0.0)
-        for a, b, d in zip(actual, boosted, is_dot)
-    ]
+    visible = []
+    for a, b, d in zip(actual, boosted, is_dot):
+        if isinstance(b, (int, float)) 和 b > 0:
+            visible.append(b)
+        elif d:
+            visible.append(0.0)
+        else:
+            visible.append(a * scale)
     return actual, visible, is_dot
 
 
@@ -243,33 +252,32 @@ def build_svg(totals, config):
         )
 
     return f'''<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">
-  <title id="title">Language distribution donut chart</title>
-  <desc id="desc">{description}</desc>
-  <style>
-    .label {{ fill: {theme["light_text"]}; font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
-    .percent {{ fill: {theme["light_muted"]}; font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
-    .center-value {{ fill: {theme["light_text"]}; font: 700 28px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-anchor: middle; }}
-    .center-label {{ fill: {theme["light_text"]}; font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-anchor: middle; }}
-    .bar-track {{ fill: {theme["light_track"]}; opacity: 0.34; }}
-    .donut-track {{ stroke: {theme["light_track"]}; opacity: 0.20; }}
-    .segment {{ fill: none; stroke-width: {stroke_width:g}; stroke-linecap: round; }}
-    @media (prefers-color-scheme: dark) {{
-      .label, .center-value, .center-label {{ fill: {theme["dark_text"]}; }}
-      .percent {{ fill: {theme["dark_muted"]}; }}
-      .bar-track {{ fill: {theme["dark_track"]}; }}
-      .donut-track {{ stroke: {theme["dark_track"]}; }}
-    }}
-  </style>
+ <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">
+   <title id="title">Language distribution donut chart</title>
+   <desc id="desc">{description}</desc>
+   <style>
+     .label {{ fill: {theme["light_text"]}; font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
+     .percent {{ fill: {theme["light_muted"]}; font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
+     .center-value {{ fill: {theme["light_text"]}; font: 700 28px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-anchor: middle; }}
+     .center-label {{ fill: {theme["light_text"]}; font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-anchor: middle; }}
+     .bar-track {{ fill: {theme["light_track"]}; opacity: 0.34; }}
+     .donut-track {{ stroke: {theme["light_track"]}; opacity: 0.20; }}
+     .segment {{ fill: none; stroke-width: {stroke_width:g}; stroke-linecap: round; }}
+     @media (prefers-color-scheme: dark) {{
+       .label, .center-value, .center-label {{ fill: {theme["dark_text"]}; }}
+       .percent {{ fill: {theme["dark_muted"]}; }}
+       .bar-track {{ fill: {theme["dark_track"]}; }}
+       .donut-track {{ stroke: {theme["dark_track"]}; }}
+     }}
+   </style>
 
-  <g>
-{chr(10).join(legend_rows)}
-  </g>
+   <g>
+ {chr(10).join(legend_rows)}
+   </g>
 
-  <g>
-    <circle class="donut-track" cx="{center_x:.1f}" cy="{center_y:.1f}" r="{radius:.1f}" fill="none" stroke-width="{stroke_width:g}"/>
-{chr(10).join(segments)}
-{chr(10).join(dots)}
-  </g>
-{center_text}</svg>
-'''
+   <g>
+     <circle class="donut-track" cx="{center_x:.1f}" cy="{center_y:.1f}" r="{radius:.1f}" fill="none" stroke-width="{stroke_width:g}"/>
+ {chr(10).join(segments)}
+ {chr(10).join(dots)}
+   </g>
+ {center_text}</svg>
