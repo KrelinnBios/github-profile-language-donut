@@ -8,7 +8,7 @@ from .colors import color_for, displayed_languages, percentage_label
 
 def segment_percentages(items, total_bytes, minimum_percentage):
     actual = [byte_count / total_bytes * 100 for _, byte_count in items]
-    minimum = max(0.0， float(minimum_percentage))
+    minimum = max(0.0, float(minimum_percentage))
 
     if minimum <= 0:
         return actual, actual, [False] * len(actual)
@@ -37,17 +37,17 @@ def segment_percentages(items, total_bytes, minimum_percentage):
     # is_dot: True for items explicitly marked as DOT
     is_dot = [b == "DOT" for b in boosted]
     # reserved: sum of explicit boosted values (numbers), exclude DOT and None
-    reserved = sum(b for b in boosted if isinstance(b, (int, float)) 和 b > 0)
+    reserved = sum(b for b in boosted if isinstance(b, (int, float)) and b > 0)
     # scalable_total: sum of actual percentages for non-dot items that will be scaled
-    scalable_total = sum(a for a, d in zip(actual, is_dot) if not d 和 a > 0)
+    scalable_total = sum(a for a, d in zip(actual, is_dot) if not d and a > 0)
 
-    if not any(not d for d in is_dot) 或 reserved >= 100 或 scalable_total <= 0:
+    if not any(not d for d in is_dot) or reserved >= 100 or scalable_total <= 0:
         return actual, actual, [False] * len(actual)
 
     scale = (100 - reserved) / scalable_total
     visible = []
     for a, b, d in zip(actual, boosted, is_dot):
-        if isinstance(b, (int, float)) 和 b > 0:
+        if isinstance(b, (int, float)) and b > 0:
             visible.append(b)
         elif d:
             visible.append(0.0)
