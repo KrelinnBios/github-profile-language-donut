@@ -280,4 +280,4 @@ def build_svg(totals, config):
  {chr(10).join(segments)}
  {chr(10).join(dots)}
    </g>
- {center_text}</svg>
+ {center_text}</svg>'''
