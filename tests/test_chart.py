@@ -23,76 +23,31 @@ def config():
 class BuildSvgTests(unittest.TestCase):
 
     def test_five_languages_use_one_column(self):
-        totals = Counter(
-            {
-                f"Language{i}": 100 - i * 10
-                for i in range(5)
-            }
-        )
-
+        totals = Counter({f"Language{i}": 100 - i * 10 for i in range(5)})
         svg = build_svg(totals, config())
 
         self.assertIn('width="525"', svg)
         self.assertIn('cx="418.0"', svg)
         self.assertIn('cx="26.0"', svg)
-
-        self.assertEqual(
-            5,
-            len(re.findall(r'<text class="label"', svg))
-        )
-
+        self.assertEqual(5, len(re.findall(r'<text class="label"', svg)))
 
     def test_eight_languages_use_two_columns(self):
-        totals = Counter(
-            {
-                f"Language{i}": 100 - i * 5
-                for i in range(8)
-            }
-        )
-
+        totals = Counter({f"Language{i}": 100 - i * 5 for i in range(8)})
         svg = build_svg(totals, config())
 
         self.assertIn('width="615"', svg)
         self.assertIn('cx="508.0"', svg)
-
-        self.assertEqual(
-            8,
-            len(re.findall(r'<text class="label"', svg))
-        )
-
+        self.assertEqual(8, len(re.findall(r'<text class="label"', svg)))
 
     def test_tenth_entry_is_other(self):
-        totals = Counter(
-            {
-                f"Language{i}": 120 - i * 5
-                for i in range(12)
-            }
-        )
-
+        totals = Counter({f"Language{i}": 120 - i * 5 for i in range(12)})
         svg = build_svg(totals, config())
 
-        self.assertEqual(
-            10,
-            len(re.findall(r'<text class="label"', svg))
-        )
+        self.assertEqual(10, len(re.findall(r'<text class="label"', svg)))
+        self.assertIn(">Other</text>", svg)
+        self.assertNotIn(">Language9</text>", svg)
 
-        self.assertIn(
-            ">Other</text>",
-            svg
-        )
-
-        self.assertNotIn(
-            ">Language9</text>",
-            svg
-        )
-
-
-    def test_segments_render_as_independent_rounded_arcs(self):
-        """
-        大于 dot 阈值的语言生成独立 path，
-        极小语言渲染为圆点。
-        """
-
+    def test_segments_render_as_contiguous_annular_paths(self):
         totals = Counter(
             {
                 "Kotlin": 4500,
@@ -103,67 +58,27 @@ class BuildSvgTests(unittest.TestCase):
                 "PowerShell": 20,
             }
         )
-
         svg = build_svg(totals, config())
 
-        # 四个语言 > 0.5% = 四个独立圆弧
-        self.assertEqual(
-            4,
-            len(re.findall(r'<path class="segment"', svg))
-        )
+        self.assertEqual(6, len(re.findall(r'<path class="segment"', svg)))
+        self.assertIn('class="donut-track" d="M', svg)
+        self.assertIn(" Q ", svg)
+        self.assertIn("A 72.00 72.00", svg)
+        self.assertIn("A 50.00 50.00", svg)
+        self.assertNotIn("stroke-linecap: round;", svg)
+        self.assertNotIn("stroke-dasharray", svg)
 
-        # 两个极小语言 = 两个圆点
-        self.assertGreaterEqual(
-            len(re.findall(r'<circle cx=', svg)),
-            2,
-        )
+        for color in (
+            "#7F52FF",
+            "#E34F26",
+            "#F7DF1E",
+            "#00B8D9",
+            "#22C55E",
+            "#EC4899",
+        ):
+            self.assertIn(f'fill="{color}"', svg)
 
-        # 全部使用圆角
-        self.assertIn(
-            "stroke-linecap: round;",
-            svg
-        )
-
-
-        # 不应该再出现旧方案
-        self.assertNotIn(
-            'stroke-linecap="butt"',
-            svg
-        )
-
-        self.assertNotIn(
-            "stroke-dasharray",
-            svg
-        )
-
-        # 圆弧语言颜色以 stroke 出现
-        arc_colors = ("#7F52FF", "#E34F26", "#F7DF1E", "#00B8D9")
-        for color in arc_colors:
-            self.assertIn(
-                f'stroke="{color}"',
-                svg
-            )
-
-        # 极小语言颜色以 fill 出现（圆点）
-        dot_colors = ("#22C55E", "#EC4899")
-        for color in dot_colors:
-            self.assertIn(
-                f'fill="{color}"',
-                svg
-            )
-
-        # 确认使用 SVG arc
-        self.assertIn(
-            "A 72.00 72.00",
-            svg
-        )
-
-
-    def test_tiny_segments_are_not_lost(self):
-        """
-        极小比例语言仍然应该保留（渲染为圆点）。
-        """
-
+    def test_tiny_segments_remain_on_the_donut(self):
         totals = Counter(
             {
                 "Kotlin": 9000,
@@ -171,26 +86,11 @@ class BuildSvgTests(unittest.TestCase):
                 "PowerShell": 5,
             }
         )
-
         svg = build_svg(totals, config())
 
-        # Kotlin 是唯一的弧段
-        self.assertEqual(
-            1,
-            len(re.findall(r'<path class="segment"', svg))
-        )
-
-        # Python 和 PowerShell 渲染为圆点
-        self.assertIn(
-            "#22C55E",
-            svg
-        )
-
-        self.assertIn(
-            "#EC4899",
-            svg
-        )
-
+        self.assertEqual(3, len(re.findall(r'<path class="segment"', svg)))
+        for color in ("#7F52FF", "#22C55E", "#EC4899"):
+            self.assertIn(f'fill="{color}"', svg)
 
     def test_current_language_palette_uses_distinct_colors(self):
         languages = (
@@ -201,37 +101,15 @@ class BuildSvgTests(unittest.TestCase):
             "Python",
             "PowerShell",
         )
-
-        colors = {
-            DEFAULT_COLORS[language]
-            for language in languages
-        }
-
-        self.assertEqual(
-            len(languages),
-            len(colors)
-        )
-
+        colors = {DEFAULT_COLORS[language] for language in languages}
+        self.assertEqual(len(languages), len(colors))
 
     def test_unknown_language_color_is_stable(self):
+        first = generated_color("FutureLanguage")
+        second = generated_color("FutureLanguage")
 
-        first = generated_color(
-            "FutureLanguage"
-        )
-
-        second = generated_color(
-            "FutureLanguage"
-        )
-
-        self.assertEqual(
-            first,
-            second
-        )
-
-        self.assertRegex(
-            first,
-            r"^#[0-9A-F]{6}$"
-        )
+        self.assertEqual(first, second)
+        self.assertRegex(first, r"^#[0-9A-F]{6}$")
 
 
 if __name__ == "__main__":
