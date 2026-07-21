@@ -90,64 +90,33 @@ GitHub 个人主页 README 来自与用户名同名的公开仓库。例如用�
 
 将 [`examples/update-language-donut.yml`](./examples/update-language-donut.yml) 复制到主页仓库的 `.github/workflows/update-language-donut.yml`。
 
-完整工作流包括检出仓库、调用 Action 和提交生成结果：
+核心步骤如下，运行时会自动解析并检出最新正式版本：
 
 ```yaml
-name: Update language donut chart
+- name: Resolve latest language donut release
+  id: language-donut-release
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    release_tag=$(gh api repos/KrelinnBios/github-profile-language-donut/releases/latest --jq .tag_name)
+    echo tag=$release_tag >> $GITHUB_OUTPUT
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-  workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/update-language-donut.yml"
-      - "language-donut.config.json"
+- name: Check out language donut action
+  uses: actions/checkout@v4
+  with:
+    repository: KrelinnBios/github-profile-language-donut
+    ref: ${{ steps.language-donut-release.outputs.tag }}
+    path: .github/actions/github-profile-language-donut
 
-permissions:
-  contents: write
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out profile repository
-        uses: actions/checkout@v4
-
-      - name: Resolve latest language donut release
-        id: language-donut-release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          release_tag=$(gh api repos/KrelinnBios/github-profile-language-donut/releases/latest --jq .tag_name)
-          echo tag=$release_tag >> $GITHUB_OUTPUT
-
-      - name: Check out language donut action
-        uses: actions/checkout@v4
-        with:
-          repository: KrelinnBios/github-profile-language-donut
-          ref: ${{ steps.language-donut-release.outputs.tag }}
-          path: .github/actions/github-profile-language-donut
-
-      - name: Generate language donut chart
-        id: language-donut
-        uses: ./.github/actions/github-profile-language-donut
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          config-path: language-donut.config.json
-          output-prefix: language-donut
-
-      - name: Commit generated chart
-        if: steps.language-donut.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- README.md 'language-donut-*.svg'
-          git commit -m "Update language donut chart"
-          git push
+- name: Generate language donut chart
+  id: language-donut
+  uses: ./.github/actions/github-profile-language-donut
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    config-path: language-donut.config.json
 ```
 
-工作流使用 `schedule` 每 6 小时自动运行，无需配置任何跨仓库 Token。
+示例工作流每 6 小时自动运行，也支持手动运行，无需配置跨仓库 Token。
 
 ### 5. 首次运行
 

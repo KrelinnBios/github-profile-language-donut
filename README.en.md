@@ -90,64 +90,33 @@ Both fields may be omitted when the workflow runs in a profile repository that m
 
 Copy [`examples/update-language-donut.yml`](./examples/update-language-donut.yml) to `.github/workflows/update-language-donut.yml` in the profile repository.
 
-A complete workflow checks out the repository, runs the Action, and commits changed output:
+The core steps resolve and check out the latest stable release at runtime:
 
 ```yaml
-name: Update language donut chart
+- name: Resolve latest language donut release
+  id: language-donut-release
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    release_tag=$(gh api repos/KrelinnBios/github-profile-language-donut/releases/latest --jq .tag_name)
+    echo tag=$release_tag >> $GITHUB_OUTPUT
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-  workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/update-language-donut.yml"
-      - "language-donut.config.json"
+- name: Check out language donut action
+  uses: actions/checkout@v4
+  with:
+    repository: KrelinnBios/github-profile-language-donut
+    ref: ${{ steps.language-donut-release.outputs.tag }}
+    path: .github/actions/github-profile-language-donut
 
-permissions:
-  contents: write
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out profile repository
-        uses: actions/checkout@v4
-
-      - name: Resolve latest language donut release
-        id: language-donut-release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          release_tag=$(gh api repos/KrelinnBios/github-profile-language-donut/releases/latest --jq .tag_name)
-          echo tag=$release_tag >> $GITHUB_OUTPUT
-
-      - name: Check out language donut action
-        uses: actions/checkout@v4
-        with:
-          repository: KrelinnBios/github-profile-language-donut
-          ref: ${{ steps.language-donut-release.outputs.tag }}
-          path: .github/actions/github-profile-language-donut
-
-      - name: Generate language donut chart
-        id: language-donut
-        uses: ./.github/actions/github-profile-language-donut
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          config-path: language-donut.config.json
-          output-prefix: language-donut
-
-      - name: Commit generated chart
-        if: steps.language-donut.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- README.md 'language-donut-*.svg'
-          git commit -m "Update language donut chart"
-          git push
+- name: Generate language donut chart
+  id: language-donut
+  uses: ./.github/actions/github-profile-language-donut
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    config-path: language-donut.config.json
 ```
 
-The workflow uses `schedule` to run automatically every 6 hours — no cross-repo token required.
+The example runs automatically every 6 hours and can also be triggered manually. No cross-repository token is required.
 
 ### 5. Run it for the first time
 
