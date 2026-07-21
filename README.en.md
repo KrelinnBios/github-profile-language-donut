@@ -114,9 +114,24 @@ jobs:
       - name: Check out profile repository
         uses: actions/checkout@v4
 
+      - name: Resolve latest language donut release
+        id: language-donut-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_tag=$(gh api repos/KrelinnBios/github-profile-language-donut/releases/latest --jq .tag_name)
+          echo tag=$release_tag >> $GITHUB_OUTPUT
+
+      - name: Check out language donut action
+        uses: actions/checkout@v4
+        with:
+          repository: KrelinnBios/github-profile-language-donut
+          ref: ${{ steps.language-donut-release.outputs.tag }}
+          path: .github/actions/github-profile-language-donut
+
       - name: Generate language donut chart
         id: language-donut
-        uses: KrelinnBios/github-profile-language-donut@v1.0.1
+        uses: ./.github/actions/github-profile-language-donut
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           config-path: language-donut.config.json
@@ -251,8 +266,8 @@ Scheduled updates require no cross-repo tokens. For immediate refreshes, click *
 
 ## Versioning and Security
 
-- `KrelinnBios/github-profile-language-donut@v1.0.1`: the current stable release and the recommended version for direct use.
-- Other full release tags: select one from [Releases](https://github.com/KrelinnBios/github-profile-language-donut/releases) and upgrade explicitly.
+- Latest stable release: use the workflow above to resolve and check out the latest stable release through the Releases API.
+- Full release tag: select and pin one from [Releases](https://github.com/KrelinnBios/github-profile-language-donut/releases) when upgrades should remain explicit.
 - Full commit SHA: provides the strictest supply-chain reproducibility but requires manual update tracking.
 
 The profile workflow uses `contents: write` only to commit the generated SVG and README. The Action does not write to other repositories.
