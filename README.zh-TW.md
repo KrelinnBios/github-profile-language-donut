@@ -114,9 +114,24 @@ jobs:
       - name: Check out profile repository
         uses: actions/checkout@v4
 
+      - name: Resolve latest language donut release
+        id: language-donut-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_tag=$(gh api repos/KrelinnBios/github-profile-language-donut/releases/latest --jq .tag_name)
+          echo tag=$release_tag >> $GITHUB_OUTPUT
+
+      - name: Check out language donut action
+        uses: actions/checkout@v4
+        with:
+          repository: KrelinnBios/github-profile-language-donut
+          ref: ${{ steps.language-donut-release.outputs.tag }}
+          path: .github/actions/github-profile-language-donut
+
       - name: Generate language donut chart
         id: language-donut
-        uses: KrelinnBios/github-profile-language-donut@v1.0.1
+        uses: ./.github/actions/github-profile-language-donut
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           config-path: language-donut.config.json
@@ -251,8 +266,8 @@ Action 只在 SVG 內容、README 連結或舊圖檔案發生變化時輸出 `ch
 
 ## 版本選擇與安全
 
-- `KrelinnBios/github-profile-language-donut@v1.0.1`：目前可用的穩定版本，適合直接使用。
-- 其他完整版本標籤：從 [Releases](https://github.com/KrelinnBios/github-profile-language-donut/releases) 選擇，升級時由使用者決定。
+- 最新正式版：建議使用上方工作流程，透過 Releases API 自動解析並簽出最新正式版本。
+- 完整版本標籤：可從 [Releases](https://github.com/KrelinnBios/github-profile-language-donut/releases) 選擇並固定，升級時由使用者決定。
 - 固定提交 SHA：可獲得最嚴格的供應鏈可重複性，但需要手動追蹤更新。
 
 首頁工作流程中的 `contents: write` 用於提交產生的 SVG 和 README；Action 本身不會向其他儲存庫寫入內容。
