@@ -17,8 +17,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: update-language-donut
-  cancel-in-progress: true
+  group: update-profile-charts
+  cancel-in-progress: false
 
 jobs:
   update:
