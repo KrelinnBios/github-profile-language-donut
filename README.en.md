@@ -273,8 +273,6 @@ Tests cover one-column layout, two-column layout, `Other` aggregation, generated
 
 This project is released under the [MIT License](./LICENSE), which permits use, modification, distribution, and commercial use provided that the license and copyright notice are retained.
 
-GitHub, GitHub Actions, GitHub Linguist, and the GitHub API remain subject to their own terms and are not covered by this project's MIT License merely because this project calls or references them.
-
 ## Feedback and Contributions
 
 Issues, layout compatibility reports, language color suggestions, documentation improvements, and feature requests are welcome through [GitHub Issues](https://github.com/KrelinnBios/github-profile-language-donut/issues).

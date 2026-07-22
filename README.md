@@ -273,8 +273,6 @@ python -m unittest discover -s tests -v
 
 本项目依据 [MIT License](./LICENSE) 发布，允许使用、修改、分发和商业使用，但须保留许可证与版权声明。
 
-GitHub、GitHub Actions、GitHub Linguist 及 GitHub API 分别适用其自身条款；它们不因被本项目调用或提及而纳入本项目的 MIT 许可。
-
 ## 反馈与贡献
 
 欢迎通过 [GitHub Issues](https://github.com/KrelinnBios/github-profile-language-donut/issues) 提交使用问题、布局兼容问题、新语言配色建议、文档改进或其他功能建议。
