@@ -1,13 +1,9 @@
-# Place this file at .github/workflows/update-language-donut.yml in your profile repository.
 name: Update language donut chart
 
 on:
-  # Scheduled update every 6 hours (no cross-repo token needed)
   schedule:
     - cron: '0 */6 * * *'
-  # Manual trigger
   workflow_dispatch:
-  # Re-run when config or workflow changes
   push:
     paths:
       - '.github/workflows/update-language-donut.yml'
@@ -57,4 +53,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- README.md 'language-donut-*.svg'
           git commit -m "Update language donut chart"
+          git pull --rebase origin main
           git push
