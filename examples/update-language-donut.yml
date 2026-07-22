@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out profile repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Resolve latest language donut release
         id: language-donut-release
@@ -36,7 +36,7 @@ jobs:
           echo tag=$release_tag >> $GITHUB_OUTPUT
 
       - name: Check out language donut action
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: KrelinnBios/github-profile-language-donut
           ref: ${{ steps.language-donut-release.outputs.tag }}

@@ -1,4 +1,4 @@
-name: 测试
+name: Test
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出仓库
+      - name: Check out repository
         uses: actions/checkout@v7
-      - name: 运行测试
+      - name: Run tests
         run: python -m unittest discover -s tests -v

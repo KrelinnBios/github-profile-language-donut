@@ -102,7 +102,7 @@ The core steps resolve and check out the latest stable release at runtime:
     echo tag=$release_tag >> $GITHUB_OUTPUT
 
 - name: Check out language donut action
-  uses: actions/checkout@v4
+  uses: actions/checkout@v7
   with:
     repository: KrelinnBios/github-profile-language-donut
     ref: ${{ steps.language-donut-release.outputs.tag }}
@@ -116,7 +116,7 @@ The core steps resolve and check out the latest stable release at runtime:
     config-path: language-donut.config.json
 ```
 
-The example runs automatically every 6 hours and can also be triggered manually. No cross-repository token is required.
+The example runs automatically every 6 hours and can also be triggered manually. Each run resolves the latest stable release, and no cross-repository token is required.
 
 ### 5. Run it for the first time
 
